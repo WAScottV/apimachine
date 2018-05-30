@@ -39,6 +39,8 @@ app.get('/api/ship', shipHandler);
 // pulse micromachine and return static response
 app.post('/api/ibm', openHandler);
 
+app.post('/api/aws', awsHandler);
+
 //  function issues http call to server and returns static response
 async function shipHandler(req, res) {
 	const {method, url, headers, body } = req
@@ -79,6 +81,28 @@ const callOpenWhisk = (route) => {
 	       resolve(body)
 	    });
 	  })
+}
+
+//  function issues http call to server, testing the microservices and returning response
+async function awsHandler(req, res) {
+	const {method, url, headers, body } = req
+	const result = await callAws(url)
+	console.log("openhandler function ")
+	res.status(200).send(JSON.stringify(result))
+	return;
+}
+
+const callAws= (route) => {
+	return new Promise((resolve, reject) => {
+		request.post( api + route, { json: data }, function (error, response, body) {
+			console.log(data);
+			if (error) {
+			   console.log("Error encountered calling - callOpenWhisk")
+			   console.log(error)
+			   reject(error) }
+			resolve(body)
+		 });
+	   });
 }
 
 
